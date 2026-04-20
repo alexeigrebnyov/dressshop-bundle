@@ -57,7 +57,7 @@ import {
   ShopifyRemoveFromCartOperation,
   ShopifyUpdateCartOperation,
 } from "./types";
-import { createMockCart, isMockMode } from "./mock";
+import { createMockCart, getMockCart, addToMockCart, removeFromMockCart, updateMockCart, searchMockProducts, getMockProducts, mockProducts, isMockMode } from "./mock";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, "https://")
@@ -230,10 +230,22 @@ export async function createCart(): Promise<Cart> {
 }
 
 export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
+  lines: { merchandiseId: string; quantity: number }[],
+  variant?: {
+    id: string;
+    title: string;
+    price: { amount: string; currencyCode: string };
+    selectedOptions: { name: string; value: string }[];
+  } | null,
+  product?: {
+    id: string;
+    handle: string;
+    title: string;
+    featuredImage: { url: string; altText: string; width: number; height: number };
+  } | null
 ): Promise<Cart> {
   if (isMockMode()) {
-    return createMockCart();
+    return addToMockCart(lines, variant as any, product as any);
   }
   const cartId = (await cookies()).get("cartId")?.value!;
   const res = await shopifyFetch<ShopifyAddToCartOperation>({
@@ -248,7 +260,7 @@ export async function addToCart(
 
 export async function removeFromCart(lineIds: string[]): Promise<Cart> {
   if (isMockMode()) {
-    return createMockCart();
+    return removeFromMockCart(lineIds);
   }
   const cartId = (await cookies()).get("cartId")?.value!;
   const res = await shopifyFetch<ShopifyRemoveFromCartOperation>({
@@ -266,7 +278,7 @@ export async function updateCart(
   lines: { id: string; merchandiseId: string; quantity: number }[]
 ): Promise<Cart> {
   if (isMockMode()) {
-    return createMockCart();
+    return updateMockCart(lines);
   }
   const cartId = (await cookies()).get("cartId")?.value!;
   const res = await shopifyFetch<ShopifyUpdateCartOperation>({
@@ -286,7 +298,7 @@ export async function getCart(): Promise<Cart | undefined> {
   cacheLife("seconds");
 
   if (isMockMode()) {
-    return createMockCart();
+    return getMockCart();
   }
 
   const cartId = (await cookies()).get("cartId")?.value;
@@ -338,6 +350,11 @@ export async function getCollectionProducts({
   cacheTag(TAGS.collections, TAGS.products);
   cacheLife("days");
 
+  if (isMockMode()) {
+    // Return all mock products for any collection
+    return mockProducts;
+  }
+
   if (!endpoint) {
     console.log(
       `Skipping getCollectionProducts for '${collection}' - Shopify not configured`
@@ -368,6 +385,22 @@ export async function getCollections(): Promise<Collection[]> {
   "use cache";
   cacheTag(TAGS.collections);
   cacheLife("days");
+
+  if (isMockMode()) {
+    return [
+      {
+        handle: "",
+        title: "All",
+        description: "All products",
+        seo: {
+          title: "All",
+          description: "All products",
+        },
+        path: "/search",
+        updatedAt: new Date().toISOString(),
+      },
+    ];
+  }
 
   if (!endpoint) {
     console.log("Skipping getCollections - Shopify not configured");
@@ -417,6 +450,11 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   cacheTag(TAGS.collections);
   cacheLife("days");
 
+  if (isMockMode()) {
+    // Return empty menu for mock mode
+    return [];
+  }
+
   if (!endpoint) {
     console.log(`Skipping getMenu for '${handle}' - Shopify not configured`);
     return [];
@@ -441,6 +479,10 @@ export async function getMenu(handle: string): Promise<Menu[]> {
 }
 
 export async function getPage(handle: string): Promise<Page> {
+  if (isMockMode()) {
+    throw new Error("getPage not implemented for mock mode");
+  }
+
   const res = await shopifyFetch<ShopifyPageOperation>({
     query: getPageQuery,
     variables: { handle },
@@ -450,6 +492,10 @@ export async function getPage(handle: string): Promise<Page> {
 }
 
 export async function getPages(): Promise<Page[]> {
+  if (isMockMode()) {
+    return [];
+  }
+
   const res = await shopifyFetch<ShopifyPagesOperation>({
     query: getPagesQuery,
   });
@@ -461,6 +507,10 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
   "use cache";
   cacheTag(TAGS.products);
   cacheLife("days");
+
+  if (isMockMode()) {
+    return mockProducts.find((p) => p.handle === handle);
+  }
 
   if (!endpoint) {
     console.log(`Skipping getProduct for '${handle}' - Shopify not configured`);
@@ -484,6 +534,10 @@ export async function getProductRecommendations(
   cacheTag(TAGS.products);
   cacheLife("days");
 
+  if (isMockMode()) {
+    return mockProducts.slice(0, 3);
+  }
+
   const res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
     query: getProductRecommendationsQuery,
     variables: {
@@ -506,6 +560,10 @@ export async function getProducts({
   "use cache";
   cacheTag(TAGS.products);
   cacheLife("days");
+
+  if (isMockMode()) {
+    return searchMockProducts(query || "");
+  }
 
   const res = await shopifyFetch<ShopifyProductsOperation>({
     query: getProductsQuery,

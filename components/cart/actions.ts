@@ -14,14 +14,23 @@ import { redirect } from "next/navigation";
 
 export async function addItem(
   prevState: any,
-  selectedVariantId: string | undefined
+  formData: FormData
 ) {
-  if (!selectedVariantId) {
+  const variantId = formData.get("variantId") as string;
+  const variantStr = formData.get("variant") as string;
+  const productStr = formData.get("product") as string;
+
+  if (!variantId) {
     return "Error adding item to cart";
   }
 
   try {
-    await addToCart([{ merchandiseId: selectedVariantId, quantity: 1 }]);
+    // Pass variant and product data for mock mode
+    await addToCart(
+      [{ merchandiseId: variantId, quantity: 1 }],
+      variantStr ? JSON.parse(variantStr) : null,
+      productStr ? JSON.parse(productStr) : null
+    );
     updateTag(TAGS.cart);
   } catch (e) {
     return "Error adding item to cart";
