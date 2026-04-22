@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { addItem } from "components/cart/actions";
 import { Product, ProductVariant } from "lib/shopify/types";
 import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useFormState } from "react";
 import { useCart } from "./cart-context";
 
 function SubmitButton({
@@ -70,16 +70,34 @@ export function AddToCart({ product }: { product: Product }) {
   );
   const defaultVariantId = variants.length === 1 ? variants[0]?.id : undefined;
   const selectedVariantId = variant?.id || defaultVariantId;
-  const addItemAction = formAction.bind(null, selectedVariantId);
   const finalVariant = variants.find(
     (variant) => variant.id === selectedVariantId,
   )!;
+
+  // Serialize variant and product info for server action
+  const variantData = finalVariant ? {
+    id: finalVariant.id,
+    title: finalVariant.title,
+    price: finalVariant.price,
+    selectedOptions: finalVariant.selectedOptions,
+  } : null;
+
+  const productData = {
+    id: product.id,
+    handle: product.handle,
+    title: product.title,
+    featuredImage: product.featuredImage,
+  };
 
   return (
     <form
       action={async () => {
         addCartItem(finalVariant, product);
-        addItemAction();
+        const formData = new FormData();
+        formData.set("variantId", selectedVariantId || "");
+        formData.set("variant", JSON.stringify(variantData));
+        formData.set("product", JSON.stringify(productData));
+        formAction(formData);
       }}
     >
       <SubmitButton
