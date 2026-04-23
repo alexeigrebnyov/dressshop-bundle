@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { addItem } from "components/cart/actions";
 import { Product, ProductVariant } from "lib/shopify/types";
 import { useSearchParams } from "next/navigation";
-import { useActionState, useFormState } from "react";
+import { useActionState } from "react";
 import { useCart } from "./cart-context";
 
 function SubmitButton({
