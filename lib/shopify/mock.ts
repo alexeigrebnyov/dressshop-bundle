@@ -84,6 +84,7 @@ export const mockProducts: Product[] = [
         {id: "option-2", name: "Color", values: ["Small", "Medium", "Large"] }
     ],
     tags: ["blouse", "casual", "summer"],
+    seo: { title: "Summer Blouse", description: "A beautiful Summer Blouse perfect for special occasions." },
     priceRange: {
       minVariantPrice: { amount: "45.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "45.00", currencyCode: "USD" },
@@ -129,6 +130,7 @@ export const mockProducts: Product[] = [
     ],
     options: [{id: "option-2", name: "Size", values: ["28", "30", "32"] }],
     tags: ["jeans", "designer", "premium"],
+    seo: { title: "Premium quality designer jeans", description: "Premium quality designer jeans perfect for special occasions." },
     priceRange: {
       minVariantPrice: { amount: "120.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "120.00", currencyCode: "USD" },
@@ -160,6 +162,8 @@ export const mockProducts: Product[] = [
     ],
     options: [{id: "option-2", name: "Size", values: ["Default Title"] }],
     tags: ["scarf", "silk", "luxury"],
+    seo: { title: "Luxury Silk Scarf", description: "Luxury Silk Scarf perfect for special occasions." },
+
     priceRange: {
       minVariantPrice: { amount: "75.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "75.00", currencyCode: "USD" },
@@ -198,6 +202,9 @@ export const mockProducts: Product[] = [
     ],
     options: [{id: "option-2", name: "Color", values: ["Black", "Brown"] }],
     tags: ["handbag", "leather", "italian"],
+    seo: { title: "Italian Leather Handbag", description: "Italian Leather Handbag perfect for special occasions." },
+
+
     priceRange: {
       minVariantPrice: { amount: "199.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "199.00", currencyCode: "USD" },
@@ -243,6 +250,8 @@ export const mockProducts: Product[] = [
     ],
     options: [{id: "option-2", name: "Size", values: ["Small", "Medium", "Large"] }],
     tags: ["coat", "winter", "wool"],
+    seo: { title: "Winter Wool Coat", description: "Winter Wool Coat perfect for special occasions." },
+
     priceRange: {
       minVariantPrice: { amount: "250.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "250.00", currencyCode: "USD" },
@@ -305,7 +314,9 @@ export function addToMockCart(
 
     if (existingIndex >= 0) {
       const existing = newLines[existingIndex];
+      // @ts-ignore
       const newQuantity = existing.quantity + line.quantity;
+      // @ts-ignore
       newLines[existingIndex] = {
         ...existing,
         quantity: newQuantity,
