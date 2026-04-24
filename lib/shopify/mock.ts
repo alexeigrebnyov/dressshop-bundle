@@ -39,7 +39,9 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Large" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium", "Large"] }],
+    options: [
+  { id: "option-1", name: "Size", values: ["Small", "Medium", "Large"] }
+],
     tags: ["dress", "evening", "elegant"],
     seo: { title: "Elegant Evening Dress", description: "A beautiful evening dress perfect for special occasions." },
     priceRange: {
@@ -78,7 +80,9 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Medium" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium"] }],
+    options: [
+        {id: "option-2", name: "Color", values: ["Small", "Medium", "Large"] }
+    ],
     tags: ["blouse", "casual", "summer"],
     priceRange: {
       minVariantPrice: { amount: "45.00", currencyCode: "USD" },
@@ -123,7 +127,7 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "32" }],
       },
     ],
-    options: [{ name: "Size", values: ["28", "30", "32"] }],
+    options: [{id: "option-2", name: "Size", values: ["28", "30", "32"] }],
     tags: ["jeans", "designer", "premium"],
     priceRange: {
       minVariantPrice: { amount: "120.00", currencyCode: "USD" },
@@ -154,7 +158,7 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Default Title" }],
       },
     ],
-    options: [{ name: "Size", values: ["Default Title"] }],
+    options: [{id: "option-2", name: "Size", values: ["Default Title"] }],
     tags: ["scarf", "silk", "luxury"],
     priceRange: {
       minVariantPrice: { amount: "75.00", currencyCode: "USD" },
@@ -192,7 +196,7 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Color", value: "Brown" }],
       },
     ],
-    options: [{ name: "Color", values: ["Black", "Brown"] }],
+    options: [{id: "option-2", name: "Color", values: ["Black", "Brown"] }],
     tags: ["handbag", "leather", "italian"],
     priceRange: {
       minVariantPrice: { amount: "199.00", currencyCode: "USD" },
@@ -237,7 +241,7 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Large" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium", "Large"] }],
+    options: [{id: "option-2", name: "Size", values: ["Small", "Medium", "Large"] }],
     tags: ["coat", "winter", "wool"],
     priceRange: {
       minVariantPrice: { amount: "250.00", currencyCode: "USD" },
