@@ -61,7 +61,7 @@ function convertToShopifyProduct(product: Product): ShopifyProduct {
 
 interface AddToCartButtonProps {
   product: Product;
-  selectedVariant: LocalVariant;
+  selectedVariant: LocalVariant | undefined;
   locale: string;
   disabled?: boolean;
 }
