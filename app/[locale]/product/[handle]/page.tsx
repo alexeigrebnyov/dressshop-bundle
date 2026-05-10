@@ -1,14 +1,32 @@
-import { getProductByHandle } from 'lib/products';
-import { getLocaleFromPath, t } from 'lib/i18n';
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { getProductByHandle, Product, ProductVariant } from 'lib/products';
+import { getLocaleFromPath } from 'lib/i18n';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import AddToCartButton from '@/components/product/add-to-cart-button';
 
-export default async function ProductPage({
+export default function ProductPage({
   params,
 }: {
   params: Promise<{ locale: string; handle: string }>;
 }) {
-  const { locale: localeParam, handle } = await params;
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+  // Unwrap params in client component
+  const [resolvedParams, setResolvedParams] = useState<{ locale: string; handle: string } | null>(null);
+
+  useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+
+  if (!resolvedParams) {
+    return <div className="max-w-6xl mx-auto px-4 py-8">Loading...</div>;
+  }
+
+  const { locale: localeParam, handle } = resolvedParams;
   const locale = getLocaleFromPath(`/${localeParam}/`);
   const product = getProductByHandle(handle);
 
@@ -44,6 +62,15 @@ export default async function ProductPage({
   const sizes = [...new Set(product.variants.map((v) => v.size).filter(Boolean))];
   const colors = [...new Set(product.variants.map((v) => v.color).filter(Boolean))];
 
+  // Find matching variant based on selected size and color
+  const selectedVariant = product.variants.find((v) => {
+    const sizeMatch = !selectedSize || v.size === selectedSize;
+    const colorMatch = !selectedColor || v.color === selectedColor;
+    return sizeMatch && colorMatch;
+  }) || product.variants[0];
+
+  const price = selectedVariant?.price ?? product.variants[0]?.price ?? 0;
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <Link
@@ -68,7 +95,7 @@ export default async function ProductPage({
         {/* Product Info */}
         <div>
           <h1 className="text-3xl font-bold mb-4">{title}</h1>
-          <p className="text-2xl font-bold mb-6">${product.variants[0]?.price.toFixed(2)}</p>
+          <p className="text-2xl font-bold mb-6">${price.toFixed(2)}</p>
 
           <div className="prose mb-8">
             <p>{description}</p>
@@ -77,12 +104,19 @@ export default async function ProductPage({
           {/* Size Selection */}
           {sizes.length > 0 && (
             <div className="mb-6">
-              <h3 className="font-semibold mb-2">{text.size}: {text.selectSize}</h3>
+              <h3 className="font-semibold mb-2">
+                {text.size}: {selectedSize || text.selectSize}
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((size) => (
                   <button
                     key={size}
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                    onClick={() => setSelectedSize(size === selectedSize ? null : size)}
+                    className={`px-4 py-2 border rounded-lg transition ${
+                      selectedSize === size
+                        ? 'bg-black text-white border-black'
+                        : 'hover:bg-gray-100'
+                    }`}
                   >
                     {size}
                   </button>
@@ -94,12 +128,19 @@ export default async function ProductPage({
           {/* Color Selection */}
           {colors.length > 0 && (
             <div className="mb-6">
-              <h3 className="font-semibold mb-2">{text.color}: {text.selectColor}</h3>
+              <h3 className="font-semibold mb-2">
+                {text.color}: {selectedColor || text.selectColor}
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {colors.map((color) => (
                   <button
                     key={color}
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                    onClick={() => setSelectedColor(color === selectedColor ? null : color)}
+                    className={`px-4 py-2 border rounded-lg transition ${
+                      selectedColor === color
+                        ? 'bg-black text-white border-black'
+                        : 'hover:bg-gray-100'
+                    }`}
                   >
                     {color}
                   </button>
@@ -109,11 +150,15 @@ export default async function ProductPage({
           )}
 
           {/* Add to Cart */}
-          <button className="w-full bg-black text-white py-4 rounded-xl font-semibold hover:bg-gray-800 transition disabled:bg-gray-300">
-            {product.availableForSale ? text.addToCart : text.outOfStock}
-          </button>
+          <AddToCartButton
+            product={product}
+            selectedVariant={selectedVariant}
+            locale={locale}
+            disabled={!selectedVariant || selectedVariant.stock <= 0}
+          />
         </div>
       </div>
     </div>
   );
 }
+
