@@ -99,10 +99,10 @@ export default function AddToCartButton({
   return (
     <button
       onClick={handleClick}
-      disabled={disabled || selectedVariant.stock <= 0}
+      disabled={disabled || !selectedVariant || selectedVariant.stock <= 0}
       className="w-full bg-black text-white py-4 rounded-xl font-semibold hover:bg-gray-800 transition disabled:bg-gray-300"
     >
-      {product.availableForSale && selectedVariant.stock > 0
+      {product.availableForSale && selectedVariant && selectedVariant.stock > 0
         ? t.addToCart
         : t.outOfStock}
     </button>
