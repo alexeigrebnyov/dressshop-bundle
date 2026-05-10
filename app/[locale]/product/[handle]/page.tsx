@@ -108,7 +108,7 @@ export default function ProductPage({
                 {text.size}: {selectedSize || text.selectSize}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {sizes.map((size) => (
+                {sizes.map((size) => size && (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size === selectedSize ? null : size)}
@@ -132,7 +132,7 @@ export default function ProductPage({
                 {text.color}: {selectedColor || text.selectColor}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {colors.map((color) => (
+                {colors.map((color) => color && (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color === selectedColor ? null : color)}
