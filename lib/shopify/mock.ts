@@ -39,7 +39,9 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Large" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium", "Large"] }],
+    options: [
+  { id: "option-1", name: "Size", values: ["Small", "Medium", "Large"] }
+],
     tags: ["dress", "evening", "elegant"],
     seo: { title: "Elegant Evening Dress", description: "A beautiful evening dress perfect for special occasions." },
     priceRange: {
@@ -78,8 +80,11 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Medium" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium"] }],
+    options: [
+        {id: "option-2", name: "Color", values: ["Small", "Medium", "Large"] }
+    ],
     tags: ["blouse", "casual", "summer"],
+    seo: { title: "Summer Blouse", description: "A beautiful Summer Blouse perfect for special occasions." },
     priceRange: {
       minVariantPrice: { amount: "45.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "45.00", currencyCode: "USD" },
@@ -123,8 +128,9 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "32" }],
       },
     ],
-    options: [{ name: "Size", values: ["28", "30", "32"] }],
+    options: [{id: "option-2", name: "Size", values: ["28", "30", "32"] }],
     tags: ["jeans", "designer", "premium"],
+    seo: { title: "Premium quality designer jeans", description: "Premium quality designer jeans perfect for special occasions." },
     priceRange: {
       minVariantPrice: { amount: "120.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "120.00", currencyCode: "USD" },
@@ -154,8 +160,10 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Default Title" }],
       },
     ],
-    options: [{ name: "Size", values: ["Default Title"] }],
+    options: [{id: "option-2", name: "Size", values: ["Default Title"] }],
     tags: ["scarf", "silk", "luxury"],
+    seo: { title: "Luxury Silk Scarf", description: "Luxury Silk Scarf perfect for special occasions." },
+
     priceRange: {
       minVariantPrice: { amount: "75.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "75.00", currencyCode: "USD" },
@@ -192,8 +200,11 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Color", value: "Brown" }],
       },
     ],
-    options: [{ name: "Color", values: ["Black", "Brown"] }],
+    options: [{id: "option-2", name: "Color", values: ["Black", "Brown"] }],
     tags: ["handbag", "leather", "italian"],
+    seo: { title: "Italian Leather Handbag", description: "Italian Leather Handbag perfect for special occasions." },
+
+
     priceRange: {
       minVariantPrice: { amount: "199.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "199.00", currencyCode: "USD" },
@@ -237,8 +248,10 @@ export const mockProducts: Product[] = [
         selectedOptions: [{ name: "Size", value: "Large" }],
       },
     ],
-    options: [{ name: "Size", values: ["Small", "Medium", "Large"] }],
+    options: [{id: "option-2", name: "Size", values: ["Small", "Medium", "Large"] }],
     tags: ["coat", "winter", "wool"],
+    seo: { title: "Winter Wool Coat", description: "Winter Wool Coat perfect for special occasions." },
+
     priceRange: {
       minVariantPrice: { amount: "250.00", currencyCode: "USD" },
       maxVariantPrice: { amount: "250.00", currencyCode: "USD" },
@@ -301,17 +314,23 @@ export function addToMockCart(
 
     if (existingIndex >= 0) {
       const existing = newLines[existingIndex];
+      // @ts-ignore
       const newQuantity = existing.quantity + line.quantity;
+      // @ts-ignore
       newLines[existingIndex] = {
         ...existing,
         quantity: newQuantity,
         cost: {
+          // @ts-ignore
           ...existing.cost,
           totalAmount: {
+            // @ts-ignore
             ...existing.cost.totalAmount,
             amount: calculateItemCost(
               newQuantity,
+                // @ts-ignore
               existing.merchandise.selectedOptions[0]?.value === "Default Title"
+                  // @ts-ignore
                 ? existing.merchandise.product?.featuredImage?.url
                   ? "10.00"
                   : "10.00"
@@ -359,7 +378,7 @@ export function addToMockCart(
 export function removeFromMockCart(lineIds: string[]): Cart {
   mockCart = {
     ...mockCart,
-    lines: mockCart.lines.filter((line) => !lineIds.includes(line.id)),
+    lines: mockCart.lines.filter((line) => !lineIds.includes(line.id!==undefined?line.id:"")),
   };
   mockCart.totalQuantity = mockCart.lines.reduce(
     (sum, item) => sum + item.quantity,
@@ -379,15 +398,19 @@ export function updateMockCart(
       if (update.quantity === 0) {
         mockCart.lines.splice(index, 1);
       } else {
+        // @ts-ignore
         mockCart.lines[index] = {
           ...mockCart.lines[index],
           quantity: update.quantity,
           cost: {
+            // @ts-ignore
             ...mockCart.lines[index].cost,
             totalAmount: {
+              // @ts-ignore
               ...mockCart.lines[index].cost.totalAmount,
               amount: calculateItemCost(
                 update.quantity,
+                  // @ts-ignore
                 mockCart.lines[index].cost.totalAmount.amount
               ),
             },
