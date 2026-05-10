@@ -41,7 +41,7 @@ export default async function SearchPage(props: {
           {products.map((product) => (
             <a
               key={product.id}
-              href={`/product/${product.handle}`}
+              href={`/en/product/${product.handle}`}
               className="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition"
             >
               <div className="aspect-[3/4] overflow-hidden bg-gray-100">

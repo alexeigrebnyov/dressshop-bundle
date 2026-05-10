@@ -149,6 +149,11 @@ export default function ProductPage({
             </div>
           )}
 
+          {/* Debug info */}
+          <div className="text-xs text-gray-400 mb-2">
+            Variants: {product.variants.length}, Selected: {selectedVariant?.id || 'none'}, Stock: {selectedVariant?.stock || 0}
+          </div>
+
           {/* Add to Cart */}
           <AddToCartButton
             product={product}

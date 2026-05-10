@@ -233,12 +233,15 @@ export function getProductsByCategory(category: string): Product[] {
 export function searchProducts(query: string): Product[] {
   const lowerQuery = query.toLowerCase();
   return products.filter(
-    (p) =>
-      p.title.toLowerCase().includes(lowerQuery) ||
-      p.description.toLowerCase().includes(lowerQuery) ||
-      p.tags.some((t) => t.includes(lowerQuery))
+      (p) =>
+          p.title.toLowerCase().includes(lowerQuery) ||
+          p.titleRu?.toLowerCase().includes(lowerQuery) ||        // Добавить
+          p.description.toLowerCase().includes(lowerQuery) ||
+          p.descriptionRu?.toLowerCase().includes(lowerQuery) ||  // Добавить
+          p.tags.some((t) => t.includes(lowerQuery))
   );
 }
+
 
 export function getAllProducts(): Product[] {
   return products;

@@ -8,6 +8,7 @@ export default function ProductCard({
   product: Product;
   locale: string;
 }) {
+  locale=locale!==undefined?locale:'en'
   const title = locale === 'ru' && (product as any).titleRu ? (product as any).titleRu : product.title;
   const price = product.variants[0]?.price ?? 0;
   const currency = '$';
